@@ -1,0 +1,72 @@
+[
+    {
+      "id": 1,
+      "name": "TanzaniaSpace",
+      "description": "A project focusing on advanced software solutions for space exploration in Tanzania.",
+      "startDate": "2025-06-01T00:00:00+03:00",
+      "endDate": "2025-12-31T00:00:00+03:00"
+    },
+    {
+      "id": 2,
+      "name": "TanzaniaNav",
+      "description": "Developing advanced navigation systems for Tanzania's infrastructure.",
+      "startDate": "2025-06-15T00:00:00+03:00",
+      "endDate": "2026-01-15T00:00:00+03:00"
+    },
+    {
+      "id": 3,
+      "name": "RenewTanzania",
+      "description": "A project to boost renewable energy use through innovative software solutions in Tanzania.",
+      "startDate": "2025-07-01T00:00:00+03:00",
+      "endDate": "2026-07-01T00:00:00+03:00"
+    },
+    {
+      "id": 4,
+      "name": "TanzaniaDev",
+      "description": "Developing new software solutions for the Tanzanian tech industry.",
+      "startDate": "2025-06-10T00:00:00+03:00",
+      "endDate": "2026-03-10T00:00:00+03:00"
+    },
+    {
+      "id": 5,
+      "name": "AITanzania",
+      "description": "AI advancements project to solve Tanzania’s critical challenges.",
+      "startDate": "2025-07-15T00:00:00+03:00",
+      "endDate": "2026-01-15T00:00:00+03:00"
+    },
+    {
+      "id": 6,
+      "name": "BioTanzania",
+      "description": "Exploring cutting-edge biotechnology through software development in Tanzania.",
+      "startDate": "2025-06-20T00:00:00+03:00",
+      "endDate": "2025-12-20T00:00:00+03:00"
+    },
+    {
+      "id": 7,
+      "name": "SmartTanzania",
+      "description": "Developing smart technology solutions for agriculture and industry in Tanzania.",
+      "startDate": "2025-08-01T00:00:00+03:00",
+      "endDate": "2026-02-01T00:00:00+03:00"
+    },
+    {
+      "id": 8,
+      "name": "HotelTechTZ",
+      "description": "Overhauling hotel management systems with modern software solutions in Tanzania.",
+      "startDate": "2025-07-01T00:00:00+03:00",
+      "endDate": "2026-01-01T00:00:00+03:00"
+    },
+    {
+      "id": 9,
+      "name": "TelecomTanzania",
+      "description": "Upgrade of telecommunication infrastructure using innovative software solutions.",
+      "startDate": "2025-06-01T00:00:00+03:00",
+      "endDate": "2025-12-01T00:00:00+03:00"
+    },
+    {
+      "id": 10,
+      "name": "CyberSecureTZ",
+      "description": "Enhancing cybersecurity measures for Tanzanian businesses through software solutions.",
+      "startDate": "2025-07-01T00:00:00+03:00",
+      "endDate": "2026-02-01T00:00:00+03:00"
+    }
+]

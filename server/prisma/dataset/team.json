@@ -1,0 +1,27 @@
+[
+  {
+    "teamName": "Retail Innovators",
+    "productOwnerUserId": 11,
+    "projectManagerUserId": 2
+  },
+  {
+    "teamName": "Hospitality Architects",
+    "productOwnerUserId": 13,
+    "projectManagerUserId": 4
+  },
+  {
+    "teamName": "Education Upkeepers",
+    "productOwnerUserId": 15,
+    "projectManagerUserId": 6
+  },
+  {
+    "teamName": "Learning Builders",
+    "productOwnerUserId": 17,
+    "projectManagerUserId": 8
+  },
+  {
+    "teamName": "Swift Solutions",
+    "productOwnerUserId": 19,
+    "projectManagerUserId": 10
+  }
+]
