@@ -18,7 +18,7 @@ const TaskCard = ({ task }: Props) => {
   const status = task.status || "Unknown";
 
   return (
-    <div className="mb-6 rounded-lg bg-white p-6 shadow-lg dark:bg-dark-secondary dark:text-white">
+    <div className="mb-4 rounded-lg bg-white p-6 shadow-lg dark:bg-dark-secondary dark:text-white">
       {/* Attachments */}
       {task.attachments && task.attachments.length > 0 && (
         <div className="mb-4">

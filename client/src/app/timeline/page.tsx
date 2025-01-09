@@ -1,25 +1,20 @@
+'use client' //its not a child of client component
+
 import { useAppSelector } from '@/app/redux';
-import { useGetTasksQuery } from '@/state/api';
+import { useGetProjectsQuery} from '@/state/api';
 import React, { useMemo, useState } from 'react'
 import "gantt-task-react/dist/index.css"
 import {DisplayOption, Gantt, ViewMode} from 'gantt-task-react'
+import Header from '@/components/Header';
 
-type Props = {
-  id: string;
-    setIsModalNewTaskOpen: (isOpen: boolean) => void;
-};
 
 type TaskTypeItems = "task" | "milestone" | "project"
 
-const Timeline = ({ id, setIsModalNewTaskOpen}: Props) =>{
+const Timeline = () =>{
   // dark mode
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
-  const { 
-          data: tasks , 
-          error ,
-          isLoading 
-      } = useGetTasksQuery({ projectId: Number(id)});
+  const {data: projects , isLoading, isError } = useGetProjectsQuery();
 
 
   const [displayOptions, setDisplayOptions] = useState<DisplayOption>({
@@ -29,18 +24,18 @@ const Timeline = ({ id, setIsModalNewTaskOpen}: Props) =>{
 
   const ganttTasks = useMemo(() => {
     return (
-      tasks?.map((task) => ({
-        start: new Date(task.startDate as string),
-        end: new Date(task.dueDate as string),
-        name: task.title,
-        id: `Task-${task.id}`,
-        type: "task" as TaskTypeItems,
-        progress: task.points ? (task.points/10) * 100 : 0,
+      projects?.map((project) => ({
+        start: new Date(project.startDate as string),
+        end: new Date(project.endDate as string),
+        name: project.name,
+        id: `Project-${project.id}`,
+        type: "project" as TaskTypeItems,
+        progress: 50,
         isDisabled: false
       })
     ) || []
   )
-  },[tasks]);
+  },[projects]);
 
 //function to handle change for view mode
   const handleViewModeChange = (
@@ -54,12 +49,12 @@ const Timeline = ({ id, setIsModalNewTaskOpen}: Props) =>{
 
 
   if(isLoading) return <div>Loading...</div>
-    if(error || !tasks) return <div>An error occured while fetching tasks</div>
+    if(isError || !projects) return <div>An error occured while fetching projectss</div>
   return (
-    <div className='px-4 xl:px-6'>
+    <div className='max-w-full p-8'>
 
-      <div className='flex flex-wrap items-center justify-between gap-2 py-5'>
-        <h1 className='me-2 text-lg font-bold dark:text-white'>Project Tasks Timeline</h1>
+      <header className='mb-4 flex items-center justify-between'>
+        <Header name='Project Timeline' />
         <div className='relative inline-block w-64'>
           <select name="" id="" className='focus:shadow-outline block w-full appearance-none rounded border border-gray-400 px-4 bg-white py-2 pr-8 leading-tight shadow hover:border-gray-500 focus:outline-none dark:border-dark-secondary dark:bg-dark-secondary dark:text-white'
             value={displayOptions.viewMode}
@@ -70,7 +65,7 @@ const Timeline = ({ id, setIsModalNewTaskOpen}: Props) =>{
             <option value={ViewMode.Month}>Month</option>
           </select>
         </div>
-      </div>
+      </header>
       <div className='overflow-hidden rounded-md bg-white shadow dark:text-white dark:bg-dark-secondary'>
         <div className='timeline'>
           <Gantt 
@@ -78,15 +73,10 @@ const Timeline = ({ id, setIsModalNewTaskOpen}: Props) =>{
             {...displayOptions}
             columnWidth={displayOptions.viewMode === ViewMode.Month ? 150 : 100}
             listCellWidth='100px'
-            barBackgroundColor={isDarkMode ? "#10121" : "#aeb8c2"}
-            barBackgroundSelectedColor={isDarkMode ? "#000" : "#9ba1a6"}
+            projectBackgroundColor={isDarkMode ? "#101214" : "#1f2937"}
+            projectProgressColor={isDarkMode ? "#1f2937" : "#aeb8c2"}
+            projectProgressSelectedColor={isDarkMode ? "#000" : "#9ba1a6"}
             />
-        </div>
-        <div className='px-4 pb-5 pt-1'>
-          <button
-            className='flex items-center px-3 py-4 rounded bg-blue-primary text-white hover:bg-blue-600'
-            onClick={() => setIsModalNewTaskOpen(true)}
-          >Add New Task</button>
         </div>
       </div>
     </div>

@@ -70,12 +70,14 @@ const columns: GridColDef[] = [
     headerName: "Author",
     width: 150,
     renderCell: (params) => params.value.username || "Unknown",
+    // renderCell: (params) => params.value?.author || "Unknown",
   },
   {
     field: "assignee",
     headerName: "Assignee",
     width: 150,
     renderCell: (params) => params.value.username || "Unassigned",
+    // renderCell: (params) => params.value.assignee || "Unassigned",
   },
 ];
 
