@@ -1,0 +1,12 @@
+{
+    "defaultEnv": "neon",
+    "neon": {
+        "driver": "pg",
+        "user": "neondb_owner",
+        "password": "iW5ODeH7vjCV",
+        "host": "ep-wispy-voice-a52c6dxj.us-east-2.aws.neon.tech",
+        "database": "neondb",
+        "port": 5432,
+        "sslmode": "require"
+    }
+}
