@@ -6,17 +6,62 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Header from '@/components/Header';
 import { BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, Bar, PieChart, Pie, Cell } from 'recharts';
 import { dataGridClassNames, dataGridSxStyles } from '@/lib/utils';
+import { Eye, View, Users, Briefcase, ListTodo, Users2 } from 'lucide-react';
 
 
 const taskColumns: GridColDef[] = [
     {field: "title", headerName: "Title", width: 200},
     {field: "status", headerName: "Status", width: 150},
     {field: "priority", headerName: "Priority", width: 150},
-    {field: "dueDate", headerName: "Due Date", width: 150}
+    {field: "dueDate", headerName: "Due Date", width: 150},
+    {
+        field: "view",
+        headerName: "View",
+        width: 100,
+        sortable: false,
+        renderCell: (params) => (
+          <button
+            className="bg-transparent p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+            onClick={() => handleView()}
+            
+          >
+            <Eye className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+          </button>
+        ),
+      },
 ];
+
+const handleView = () => {
+    console.log("Viewing row:"); // Replace this with your logic
+  };
 
 const COLORS = ["#0088FE" , "00C49F", "#FFBB28" , "#FF8042"];
 
+interface StatCardProps {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  change?: number;
+}
+
+const StatCard = ({ title, value, icon, change }: StatCardProps) => (
+  <div className="rounded-lg bg-white p-6 shadow dark:bg-dark-secondary">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
+        <p className="mt-2 text-3xl font-semibold dark:text-white">{value}</p>
+        {change !== undefined && (
+          <p className={`mt-2 text-sm ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {change >= 0 ? '+' : ''}{change}% from last month
+          </p>
+        )}
+      </div>
+      <div className="rounded-full bg-gray-100 p-3 dark:bg-gray-700">
+        {icon}
+      </div>
+    </div>
+  </div>
+);
 
 const HomePage = () => {
     const {
@@ -79,6 +124,35 @@ const HomePage = () => {
   return (
     <div className='container h-full w-[100%] bg-gray-100 bg-transparent p-8'>
         <Header name="Project Management Dashboard"/>
+        
+        {/* Stats Grid */}
+        <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Total Projects"
+            value={projects?.length || 0}
+            icon={<Briefcase className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
+            change={12}
+          />
+          <StatCard
+            title="Active Tasks"
+            value={tasks?.length || 0}
+            icon={<ListTodo className="h-6 w-6 text-green-600 dark:text-green-400" />}
+            change={8}
+          />
+          <StatCard
+            title="Team Members"
+            value={15} // Replace with actual data when available
+            icon={<Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />}
+            change={-3}
+          />
+          <StatCard
+            title="Teams"
+            value={4} // Replace with actual data when available
+            icon={<Users2 className="h-6 w-6 text-orange-600 dark:text-orange-400" />}
+            change={25}
+          />
+        </div>
+
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 '>
 
             {/* TASK PRIORITY DISTRIBUSTION */}
