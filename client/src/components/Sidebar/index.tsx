@@ -2,11 +2,11 @@
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsSidebarCollapsed } from "@/state";
 import { useGetProjectsQuery } from "@/state/api";
+import { useUser } from "@clerk/nextjs";
 import {
   AlertCircle,
   AlertOctagon,
   AlertTriangle,
-  Briefcase,
   CalendarClock,
   ChevronDown,
   ChevronUp,
@@ -14,18 +14,13 @@ import {
   FolderOpenDot,
   Home,
   Hourglass,
-  Icon,
   Layers3,
-  LockIcon,
   LucideIcon,
   Search,
   Settings,
-  ShieldAlert,
   User,
   Users,
-  X,
   Flag,
-  
   ChevronLeft,
 } from "lucide-react";
 import Image from "next/image";
@@ -34,11 +29,27 @@ import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 const Sidebar = () => {
-  const [showProjects, setShowProjects] = useState(true);
-  const [showPriority, setShowPriority] = useState(true);
-  const { data: projects } = useGetProjectsQuery();
+  const { user } = useUser();
+  const userRole = user?.publicMetadata.role as string | undefined;
   const dispatch = useAppDispatch();
   const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed);
+  const { data: projects } = useGetProjectsQuery();
+
+  // Role configuration
+  const roleDisplayMap: Record<string, string> = {
+    admin: 'Admin',
+    team_leader: 'Team Leader',
+    team_member: 'Team Member'
+  };
+
+  // Access control flags
+  const isAdmin = userRole === 'admin';
+  const showAdvancedSections = isAdmin;
+  const showProjectsSection = isAdmin;
+  const showPrioritySection = isAdmin;
+
+  const [showProjects, setShowProjects] = useState(true);
+  const [showPriority, setShowPriority] = useState(true);
 
   const priorities = [
     { id: 1, label: "High Priority", icon: AlertOctagon, color: "text-red-500" },
@@ -46,17 +57,12 @@ const Sidebar = () => {
     { id: 3, label: "Low Priority", icon: AlertCircle, color: "text-blue-500" },
   ];
 
-  // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        dispatch(setIsSidebarCollapsed(true));
-      }
+      if (window.innerWidth < 768) dispatch(setIsSidebarCollapsed(true));
     };
-
     window.addEventListener('resize', handleResize);
-    handleResize(); // Check on initial load
-    
+    handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, [dispatch]);
 
@@ -68,9 +74,46 @@ const Sidebar = () => {
     ${isSidebarCollapsed ? 'md:translate-x-0 -translate-x-full' : 'translate-x-0'}
   `;
 
+  // Team Section Component
+  const TeamSection = () => (
+    <div className="mx-3 my-4 rounded-lg bg-gray-50 p-3 dark:bg-dark-secondary">
+      <div className="flex items-center gap-3">
+        <Image src="/nasr.png" alt="Team" width={32} height={32} className="rounded-lg" />
+        <div className="flex-1 overflow-hidden">
+          <h3 className="font-semibold text-gray-800 dark:text-gray-200">NASR TEAM</h3>
+          <div className="mt-1 flex items-center gap-1.5">
+            <User className="h-3 w-3 text-gray-500" />
+            <p className="text-xs text-gray-500">
+              {userRole ? roleDisplayMap[userRole] : 'Loading...'}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Main Navigation Links
+  const MainNavigation = () => (
+    <nav className="px-3 space-y-0.5">
+      <SidebarLink icon={Home} label="Home" href={userRole ? `/dashboard/${userRole}` : '/'} collapsed={isSidebarCollapsed} />
+      <SidebarLink icon={Clock} label="Recent" href="/dashboard/list/recent" collapsed={isSidebarCollapsed} />
+      <SidebarLink icon={Search} label="Search" href="/dashboard/list/search" collapsed={isSidebarCollapsed} />
+      
+      {showAdvancedSections && (
+        <>
+          <SidebarLink icon={CalendarClock} label="Timeline" href="/dashboard/list/timeline" collapsed={isSidebarCollapsed} />
+          <SidebarLink icon={User} label="Users" href="/dashboard/list/users" collapsed={isSidebarCollapsed} />
+          <SidebarLink icon={Users} label="Team" href="/dashboard/list/teams" collapsed={isSidebarCollapsed} />
+          <SidebarLink icon={Layers3} label="Projects" href="/dashboard/list/projects" collapsed={isSidebarCollapsed} />
+        </>
+      )}
+      
+      <SidebarLink icon={Hourglass} label="Upcoming" href="/dashboard/list/upcoming" collapsed={isSidebarCollapsed} />
+    </nav>
+  );
+
   return (
     <>
-      {/* Overlay for mobile */}
       {!isSidebarCollapsed && (
         <div 
           className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm md:hidden z-30"
@@ -79,7 +122,6 @@ const Sidebar = () => {
       )}
 
       <aside className={SidebarClassName}>
-        {/* Logo Section */}
         <div className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur-sm dark:border-stroke-dark dark:bg-dark-sidebar/80">
           <div className="flex items-center gap-3">
             <Image src="/logo.png" width={35} height={35} alt="Logo" className="rounded-lg" />
@@ -95,39 +137,11 @@ const Sidebar = () => {
           </button>
         </div>
 
-        {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
-          {/* Team Section */}
-          {!isSidebarCollapsed && (
-            <div className="mx-3 my-4 rounded-lg bg-gray-50 p-3 dark:bg-dark-secondary">
-              <div className="flex items-center gap-3">
-                <Image src="/nasr.png" alt="" width={32} height={32} className="rounded-lg" />
-                <div className="flex-1 overflow-hidden">
-                  <h3 className="font-semibold text-gray-800 dark:text-gray-200">NASR TEAM</h3>
-                  <div className="mt-1 flex items-center gap-1.5">
-                    <LockIcon className="h-3 w-3 text-gray-500" />
-                    <p className="text-xs text-gray-500">Private</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {!isSidebarCollapsed && <TeamSection />}
+          <MainNavigation />
 
-          {/* Main Navigation Links */}
-          <nav className="px-3 space-y-0.5">
-            <SidebarLink icon={Home} label="Home" href="/" collapsed={isSidebarCollapsed} />
-            <SidebarLink icon={Clock} label="Recent" href="/recent" collapsed={isSidebarCollapsed} />
-            <SidebarLink icon={Search} label="Search" href="/search" collapsed={isSidebarCollapsed} />
-            <SidebarLink icon={CalendarClock} label="Timeline" href="/timeline" collapsed={isSidebarCollapsed} />
-            <SidebarLink icon={Hourglass} label="Upcoming" href="/upcoming" collapsed={isSidebarCollapsed} />
-            <SidebarLink icon={User} label="Users" href="/users" collapsed={isSidebarCollapsed} />
-            <SidebarLink icon={Users} label="Team" href="/teams" collapsed={isSidebarCollapsed} />
-            <SidebarLink icon={Layers3} label="Projects" href="/projects" collapsed={isSidebarCollapsed} />
-            
-          </nav>
-
-          {/* Priorities Section */}
-          {!isSidebarCollapsed && (
+          {showPrioritySection && !isSidebarCollapsed && (
             <>
               <div className="mt-6 px-4">
                 <button
@@ -146,7 +160,7 @@ const Sidebar = () => {
                   {priorities.map((priority) => (
                     <Link
                       key={priority.id}
-                      href={`/priorities/${priority.id}`}
+                      href={`/dashboard/list/priorities/${priority.id}`}
                       className="group flex items-center gap-3 rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-dark-hover"
                     >
                       <priority.icon className={`h-4 w-4 ${priority.color}`} />
@@ -158,8 +172,7 @@ const Sidebar = () => {
             </>
           )}
 
-          {/* Projects Section */}
-          {!isSidebarCollapsed && (
+          {showProjectsSection && !isSidebarCollapsed && (
             <>
               <div className="mt-6 px-4">
                 <button
@@ -178,16 +191,15 @@ const Sidebar = () => {
                   key={project.id}
                   icon={FolderOpenDot}
                   label={project.name}
-                  href={`/projects/${project.id}`}
+                  href={`/dashboard/list/projects/${project.id}`}
                   collapsed={isSidebarCollapsed}
                 />
               ))}
             </>
           )}
 
-          {/* Settings at the bottom */}
           <div className="mt-auto px-3 pb-6">
-            <SidebarLink icon={Settings} label="Settings" href="/settings" collapsed={isSidebarCollapsed} />
+            <SidebarLink icon={Settings} label="Settings" href="/dashboard/list/settings" collapsed={isSidebarCollapsed} />
           </div>
         </div>
       </aside>
@@ -218,9 +230,7 @@ const SidebarLink = ({ href, icon: Icon, label, collapsed }: SidebarLinkProps) =
       `}
     >
       <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600 dark:text-blue-400' : ''}`} />
-      {!collapsed && (
-        <span className="truncate">{label}</span>
-      )}
+      {!collapsed && <span className="truncate">{label}</span>}
       {collapsed && (
         <div className="absolute left-20 z-50 hidden rounded-md bg-gray-900 px-2 py-1 text-sm text-white group-hover:block">
           {label}

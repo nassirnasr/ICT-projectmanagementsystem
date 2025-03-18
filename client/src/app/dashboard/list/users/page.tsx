@@ -1,7 +1,7 @@
 "use client" //since we use material ui datagrid
 import { useGetUsersQuery, User, Task } from '@/state/api'
 import React, { useState, useRef, useEffect } from 'react'
-import { useAppSelector } from '../redux';
+import { useAppSelector } from '../../../redux';
 import Header from '@/components/Header';
 import { DataGrid, GridColDef, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
 import Image from 'next/image';

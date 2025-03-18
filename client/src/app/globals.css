@@ -76,3 +76,72 @@ body,
   height: 0;
   width: 0;
 }
+
+
+:root {
+  /* Light Theme */
+  --background-light: #f8f9fa;
+  --primary-light: #2d3748;
+  --secondary-light: #4a5568;
+  --accent-light: #6b46c1;
+  --input-bg-light: #ffffff;
+  --input-border-light: #e2e8f0;
+
+  /* Dark Theme */
+  --background-dark: #1a202c;
+  --primary-dark: #f7fafc;
+  --secondary-dark: #cbd5e0;
+  --accent-dark: #9f7aea;
+  --input-bg-dark: #2d3748;
+  --input-border-dark: #4a5568;
+}
+
+.dark {
+  --background: var(--background-dark);
+  --primary: var(--primary-dark);
+  --secondary: var(--secondary-dark);
+  --accent: var(--accent-dark);
+  --input-bg: var(--input-bg-dark);
+  --input-border: var(--input-border-dark);
+}
+
+.light {
+  --background: var(--background-light);
+  --primary: var(--primary-light);
+  --secondary: var(--secondary-light);
+  --accent: var(--accent-light);
+  --input-bg: var(--input-bg-light);
+  --input-border: var(--input-border-light);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin {
+  animation: spin 1.5s linear infinite;
+}
+
+.bg-myPurple {
+  background-color: #6b46c1;
+}
+
+.from-mySkyLight {
+  --tw-gradient-from: #e0f2fe;
+  --tw-gradient-to: #e0f2fe00;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-myPurpleLight {
+  --tw-gradient-to: #6b46c122;
+}

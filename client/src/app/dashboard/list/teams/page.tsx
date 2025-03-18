@@ -2,7 +2,7 @@
 import { useGetTeamsQuery} from '@/state/api'
 // import { useGetTeamsQuery, useUpdateTeamMutation } from '@/state/api'
 import React, { useState } from 'react'
-import { useAppSelector } from '../redux';
+import { useAppSelector } from '../../../redux';
 import Header from '@/components/Header';
 import { DataGrid, GridColDef, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
 import { dataGridClassNames, dataGridSxStyles } from '@/lib/utils';

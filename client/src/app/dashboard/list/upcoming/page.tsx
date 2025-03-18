@@ -71,7 +71,7 @@ const UpcomingPage = () => {
         {upcomingItems.map((item) => (
           <div
             key={item.id}
-            className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-dark-secondary"
+            className="cursor-pointer rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-dark-secondary"
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">

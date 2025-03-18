@@ -6,6 +6,7 @@ export interface Project{
     description?:string;
     startDate?:string;
     endDate? :string;
+    teamId?: number;
 }
 
 export enum Priority{
@@ -30,6 +31,7 @@ export interface User{
     profilePictureUrl?:string;
     cognitoId?:string;
     teamId?:number;
+    role?: string;
 }
 
 export interface Attachment {

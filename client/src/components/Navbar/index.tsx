@@ -10,6 +10,8 @@ import { debounce } from 'lodash';
 import TaskCard from '@/components/TaskCard';
 import ProjectCard from '@/components/ProjectCard';
 import UserCard from '@/components/UserCard';
+import { UserButton, useUser } from '@clerk/nextjs';
+
 
 const SearchBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -138,18 +140,25 @@ const SearchBar = () => {
 };
 
 const Navbar = () => {
+  const { user } = useUser();
   const dispatch = useAppDispatch();
-  const isSidebarCollapsed = useAppSelector(
-    (state) => state.global.isSidebarCollapsed,
-);
+  const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed);
+  const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
-const isDarkMode = useAppSelector(
-    (state) => state.global.isDarkMode
-);
+   // Format role display names
+   const roleDisplayMap: Record<string, string> = {
+    'admin': 'Admin',
+    'team_leader': 'Team Leader',
+    'team_member': 'Team Member'
+  };
 
+  // Extract user details with type safety
+  const userName = user?.fullName || "User";
+  const userRole = (user?.publicMetadata?.role as string) ?? ''; // Type assertion + fallback
+  const formattedRole = roleDisplayMap[userRole.toLowerCase()] || userRole || 'Unknown Role';
   return (
     <div className='flex items-center justify-between bg-white px-6 py-4 dark:bg-slate-900 sticky top-0 border-b border-slate-200 dark:border-slate-800 z-50'>
-      {/*Search Bar */}
+      {/* Search Bar */}
       <div className='flex items-center gap-6'>
         {!isSidebarCollapsed ? null : (
           <button 
@@ -162,7 +171,7 @@ const isDarkMode = useAppSelector(
         <SearchBar />
       </div>
 
-      {/* ICONS */}
+      {/* User Section */}
       <div className='flex items-center gap-2'>
         <button 
           onClick={()=> dispatch(setIsDarkMode(!isDarkMode))}
@@ -174,18 +183,22 @@ const isDarkMode = useAppSelector(
           }
         </button>
         <Link
-          href="/settings"
+          href="/dashboard/list/settings"
           className={`rounded-lg p-2.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800`}
         >
           <Settings className='h-5 w-5 text-slate-600 dark:text-slate-300'/>
         </Link>
-        <Link
-          href="/users"
-          className={`flex items-center gap-2 rounded-lg p-2.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800`}
-        >
-          <User className='h-5 w-5 text-slate-600 dark:text-slate-300'/>
-          <span className='font-medium text-slate-700 dark:text-slate-200'>Admin</span>
-        </Link>
+        <div className='flex items-center gap-2'>
+          <UserButton afterSignOutUrl="/sign-in"/>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-slate-700 dark:text-slate-200'>
+              {userName}
+            </span>
+            <span className='text-xs text-slate-500 dark:text-slate-400'>
+              {formattedRole}
+            </span>
+          </div>
+        </div>
         <div className='ml-4 mr-2 hidden h-6 w-px bg-slate-200 dark:bg-slate-700 md:inline-block'></div>
       </div>
     </div>
