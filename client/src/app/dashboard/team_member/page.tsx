@@ -9,6 +9,7 @@ import { useAuth } from '@clerk/nextjs';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { MoreVertical, CheckCircle, Clock, AlertCircle, ListTodo } from 'lucide-react';
+import LoadingPage from '../Loading';
 
 const getStatusIcon = (status: Status) => {
     const iconMap: Record<Status, JSX.Element> = {
@@ -86,7 +87,7 @@ const TeamMemberPage = () => {
   const { data: tasks, isLoading, isError } = useGetTaskByUserQuery(Number(userId));
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
-  if (isLoading) return <div className="p-8">Loading tasks...</div>;
+  if (isLoading) return <LoadingPage/>;
   if (isError) return <div className="p-8 text-red-500">Error loading tasks</div>;
 
   const statusCount = tasks?.reduce((acc: Record<string, number>, task: Task) => {

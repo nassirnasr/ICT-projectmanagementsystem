@@ -8,14 +8,24 @@ import { useAuth } from '@clerk/nextjs';
 import { Briefcase, Users, AlertTriangle, ListTodo } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import LoadingPage from '../Loading';
 
 const TeamLeaderPage = () => {
+ 
+ 
   const { userId } = useAuth();
-  const { data: teams } = useGetTeamsQuery();
-  const { data: allProjects } = useGetProjectsQuery();
-  const { data: allTasks } = useGetTasksQuery({ projectId: 0 });
-  const { data: users } = useGetUsersQuery();
+  const { data: teams, isLoading: isLoadingTeams } = useGetTeamsQuery();
+  const { data: allProjects, isLoading: isLoadingProjects } = useGetProjectsQuery();
+  const { data: allTasks, isLoading: isLoadingTasks } = useGetTasksQuery({ projectId: 0 });
+  const { data: users, isLoading: isLoadingUsers } = useGetUsersQuery();
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
+
+  // Combine loading states
+  const isLoading = isLoadingTeams || isLoadingProjects || isLoadingTasks || isLoadingUsers;
+
+  // Show loading page while data is fetching
+  if (isLoading) return <LoadingPage />;
+  
 
   // Get the team the current user leads
   const myTeam = teams?.find(t => t.projectManagerUserId === Number(userId));

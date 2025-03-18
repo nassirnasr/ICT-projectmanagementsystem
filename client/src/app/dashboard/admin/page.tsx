@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import { BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, Bar, PieChart, Pie, Cell } from 'recharts';
 import { dataGridClassNames, dataGridSxStyles } from '@/lib/utils';
 import { Eye, View, Users, Briefcase, ListTodo, Users2 } from 'lucide-react';
+import LoadingPage from '../Loading';
 
 
 const taskColumns: GridColDef[] = [
@@ -74,7 +75,7 @@ const HomePage = () => {
 
     const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
-    if (taskLoading || isProjectsLoading) return <div>Loading...</div>
+    if (taskLoading || isProjectsLoading) return <LoadingPage/>;
     if (taskError || !tasks || !projects) return <div>Error fetching data</div>
 
             //priority count

@@ -2,7 +2,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsSidebarCollapsed } from "@/state";
 import { useGetProjectsQuery } from "@/state/api";
-import { useUser } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import {
   AlertCircle,
   AlertOctagon,
@@ -29,18 +29,26 @@ import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 const Sidebar = () => {
+
+  // Extract user details with type safety
   const { user } = useUser();
-  const userRole = user?.publicMetadata.role as string | undefined;
+  const userName = user?.fullName || "User";
+  const userRole = (user?.publicMetadata?.role as string) ?? ''; // Type assertion + fallback
+  
+
+  // Format role display names
+  const roleDisplayMap: Record<string, string> = {
+    'admin': 'Admin',
+    'team_leader': 'Team Leader',
+    'team_member': 'Team Member'
+  };
+  const formattedRole = roleDisplayMap[userRole.toLowerCase()] || userRole || 'Unknown Role';
+
   const dispatch = useAppDispatch();
   const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed);
   const { data: projects } = useGetProjectsQuery();
 
-  // Role configuration
-  const roleDisplayMap: Record<string, string> = {
-    admin: 'Admin',
-    team_leader: 'Team Leader',
-    team_member: 'Team Member'
-  };
+ 
 
   // Access control flags
   const isAdmin = userRole === 'admin';
@@ -78,9 +86,9 @@ const Sidebar = () => {
   const TeamSection = () => (
     <div className="mx-3 my-4 rounded-lg bg-gray-50 p-3 dark:bg-dark-secondary">
       <div className="flex items-center gap-3">
-        <Image src="/nasr.png" alt="Team" width={32} height={32} className="rounded-lg" />
+        <UserButton/>
         <div className="flex-1 overflow-hidden">
-          <h3 className="font-semibold text-gray-800 dark:text-gray-200">NASR TEAM</h3>
+          <h3 className="font-semibold text-gray-800 dark:text-gray-200">{userName}</h3>
           <div className="mt-1 flex items-center gap-1.5">
             <User className="h-3 w-3 text-gray-500" />
             <p className="text-xs text-gray-500">
