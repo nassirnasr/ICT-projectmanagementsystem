@@ -16,10 +16,29 @@ const ModalNewProject = ({ isOpen, onClose }: Props) => {
     const [endDate, setEndDate] = useState("");
 
     const handleSubmit = async () => {
-        if (!projectName || !startDate || !endDate) return;
+        if (!projectName || !startDate || !endDate) {
+            alert("Please fill in all required fields (Project Name, Start Date, End Date)");
+            return;
+        }
+
         try {
-            const formattedStartDate = formatISO(new Date(startDate), { representation: 'complete' });
-            const formattedEndDate = formatISO(new Date(endDate), { representation: 'complete' });
+            // Format dates to ISO string with local timezone
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (end < start) {
+                alert("End date cannot be earlier than start date");
+                return;
+            }
+
+            const formattedStartDate = start.toISOString();
+            const formattedEndDate = end.toISOString();
+
+            console.log("Submitting project with dates:", {
+                startDate: formattedStartDate,
+                endDate: formattedEndDate
+            });
+
             await createProject({
                 name: projectName,
                 description,
@@ -29,11 +48,12 @@ const ModalNewProject = ({ isOpen, onClose }: Props) => {
             onClose(); // Close modal after successful submission
         } catch (error) {
             console.error("Failed to create project:", error);
+            alert("Failed to create project. Please check the console for details.");
         }
     };
 
     const isFormValid = () => {
-        if (!projectName || !description || !startDate || !endDate) return false;
+        if (!projectName || !startDate || !endDate) return false;
         return new Date(endDate) > new Date(startDate);
     };
 
@@ -62,10 +82,9 @@ const ModalNewProject = ({ isOpen, onClose }: Props) => {
 
                 <textarea
                     className={inputStyles}
-                    placeholder="Description"
+                    placeholder="Description (optional)"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    required
                     aria-label="Project Description"
                 />
 

@@ -1,4 +1,4 @@
-'use client' //its not a child of client component
+'use client' 
 
 import { useAppSelector } from '@/app/redux';
 import { useGetProjectsQuery} from '@/state/api';

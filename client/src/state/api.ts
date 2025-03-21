@@ -6,7 +6,6 @@ export interface Project{
     description?:string;
     startDate?:string;
     endDate? :string;
-    teamId?: number;
 }
 
 export enum Priority{
@@ -25,13 +24,12 @@ export enum Status {
 }
 
 export interface User{
-    userId?: number;
+    userId?: string;
     username:string;
     email:string;
     profilePictureUrl?:string;
     cognitoId?:string;
     teamId?:number;
-    role?: string;
 }
 
 export interface Attachment {
@@ -52,8 +50,8 @@ export interface Task {
         dueDate? :string;
         points?:number;
         projectId:number;
-        authorUserId?:number;
-        assignedUserId?:number;
+        authorUserId?:string;
+        assignedUserId?:string;
 
         author?:User;
         assignee?:User;
@@ -70,8 +68,8 @@ export interface SearchResults {
 export interface Team{
     teamId: number;
     teamName: string;
-    productOwnerUserId?: number;
-    projectManagerUserId?: number;
+    productOwnerUserId?: string;
+    projectManagerUserId?: string;
 }
 
 
@@ -96,22 +94,27 @@ export const api = createApi({
         }),
 
 
-        //get task
-        getTasks: build.query<Task[], { projectId:number}>({
-            query: ({projectId}) => `tasks?projectId=${projectId}`,
+        //get tasks
+        getTasks: build.query<Task[], { projectId?: number }>({  // Make projectId optional
+            query: (params) => {
+              const queryParams = params?.projectId 
+                ? `?projectId=${params.projectId}`
+                : '';
+              return `tasks${queryParams}`;
+            },
             providesTags: (result) => 
-                result 
-                    ? result.map(({id}) => ({type: "Tasks" as const , id})) 
-                    : [{type: "Tasks" as const}],
-        }),
+              result 
+                ? result.map(({id}) => ({type: "Tasks" as const , id})) 
+                : [{type: "Tasks" as const}],
+          }),
 
         //get user tasks
-        getTaskByUser: build.query<Task[], number>({
-            query:(userId) =>`tasks/user/${userId}`,
-            providesTags: (result, error, userId) => 
-                result 
-                ?result.map(({id}) => ({type: "Tasks", id}))
-                : [{type: "Tasks", id:userId}],
+        getTaskByUser: build.query<Task[], string>({
+            query: (userId) => `tasks/user/${userId}`,
+            providesTags: (result, error, userId) =>
+                result
+                    ? result.map(({ id }) => ({ type: "Tasks", id }))
+                    : [{ type: "Tasks", id: userId }],
         }),
 
          //create task

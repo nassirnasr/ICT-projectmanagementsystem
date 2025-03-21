@@ -1,5 +1,5 @@
 'use client'
-import { Priority, Project, Task, useGetProjectsQuery, useGetTasksQuery } from '@/state/api'
+import { Priority, Project, Task, useGetProjectsQuery, useGetTasksQuery, useGetTeamsQuery, useGetUsersQuery } from '@/state/api'
 import React from 'react'
 import { useAppSelector } from '../../redux';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -9,28 +9,6 @@ import { dataGridClassNames, dataGridSxStyles } from '@/lib/utils';
 import { Eye, View, Users, Briefcase, ListTodo, Users2 } from 'lucide-react';
 import LoadingPage from '../Loading';
 
-
-const taskColumns: GridColDef[] = [
-    {field: "title", headerName: "Title", width: 200},
-    {field: "status", headerName: "Status", width: 150},
-    {field: "priority", headerName: "Priority", width: 150},
-    {field: "dueDate", headerName: "Due Date", width: 150},
-    {
-        field: "view",
-        headerName: "View",
-        width: 100,
-        sortable: false,
-        renderCell: (params) => (
-          <button
-            className="bg-transparent p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
-            onClick={() => handleView()}
-            
-          >
-            <Eye className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          </button>
-        ),
-      },
-];
 
 const handleView = () => {
     console.log("Viewing row:"); // Replace this with your logic
@@ -65,18 +43,33 @@ const StatCard = ({ title, value, icon, change }: StatCardProps) => (
 );
 
 const HomePage = () => {
-    const {
-        data: tasks, 
-        isLoading: taskLoading , 
-        isError: taskError
-    } = useGetTasksQuery({projectId: parseInt("1")});
+  const {
+    data: tasks, 
+    isLoading: taskLoading, 
+    isError: taskError
+  } = useGetTasksQuery({});
 
     const {data: projects,isLoading: isProjectsLoading} = useGetProjectsQuery();
+    const {data: users , isLoading: isUserLoading } = useGetUsersQuery();
+     const {data: teams , isLoading: isTeamLoading , isError} = useGetTeamsQuery();
 
     const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
-    if (taskLoading || isProjectsLoading) return <LoadingPage/>;
-    if (taskError || !tasks || !projects) return <div>Error fetching data</div>
+    const taskColumns: GridColDef<Task>[] = [
+        { 
+          field: 'id', 
+          headerName: 'S/N', 
+          width: 70,
+          renderCell: (params) => (tasks || []).findIndex((t: Task) => t.id === params.row.id) + 1
+        },
+        {field: "title", headerName: "Title", width: 200},
+        {field: "status", headerName: "Status", width: 150},
+        {field: "priority", headerName: "Priority", width: 150},
+        {field: "dueDate", headerName: "Due Date", width: 150},
+    ];
+
+    if (taskLoading || isProjectsLoading || isUserLoading || isTeamLoading) return <LoadingPage/>;
+    if (taskError || !tasks || !projects || !users || !teams) return <div>Error fetching data</div>
 
             //priority count
     const priorityCount = tasks.reduce(
@@ -136,19 +129,19 @@ const HomePage = () => {
           />
           <StatCard
             title="Active Tasks"
-            value={tasks?.length || 0}
+            value={tasks?.filter(task => task.status === "Work In Progress" || task.status === "To Do").length || 0}
             icon={<ListTodo className="h-6 w-6 text-green-600 dark:text-green-400" />}
             change={8}
           />
           <StatCard
-            title="Team Members"
-            value={15} // Replace with actual data when available
+            title="Users"
+            value={users?.length || 0} 
             icon={<Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />}
             change={-3}
           />
           <StatCard
             title="Teams"
-            value={4} // Replace with actual data when available
+            value={teams?.length || 0} 
             icon={<Users2 className="h-6 w-6 text-orange-600 dark:text-orange-400" />}
             change={25}
           />
@@ -205,13 +198,12 @@ const HomePage = () => {
 
             <div className='rounded-lg shadow bg-white dark:bg-dark-secondary p-4 md:col-span-2'>
                 <h3 className='mb-4 text-lg font-semibold dark:text-white'>
-                    Your Tasks
+                    All Tasks
                 </h3>
                 <div style={{height: 400, width:"100%"}}>
                     <DataGrid 
                         rows={tasks}
                         columns={taskColumns}
-                        checkboxSelection
                         loading={taskLoading}
                         getRowClassName={()=> "data-grid-row"}
                         getCellClassName={()=> "data-grid-cell"}

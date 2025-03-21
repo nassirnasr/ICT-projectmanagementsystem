@@ -17,9 +17,9 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { projectId } = req.query;
     try {
         const tasks = yield prisma.task.findMany({
-            where: {
-                projectId: Number(projectId),
-            },
+            where: projectId ? {
+                projectId: Number(projectId)
+            } : {},
             include: {
                 author: true,
                 assignee: true,
@@ -30,7 +30,9 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.json(tasks);
     }
     catch (error) {
-        res.status(500).json({ message: `Error retrieving tasks ${error.message}` });
+        res.status(500).json({
+            message: `Error retrieving tasks: ${error.message}`
+        });
     }
 });
 exports.getTasks = getTasks;
@@ -83,19 +85,26 @@ exports.updateTaskStatus = updateTaskStatus;
 //Get User Tasks
 const getUserTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.params;
+    if (!userId) {
+        res.status(400).json({ message: "User ID is required" });
+        return;
+    }
     try {
         const tasks = yield prisma.task.findMany({
             where: {
-                OR: [
-                    { authorUserId: Number(userId) },
-                    { assignedUserId: Number(userId) },
-                ]
+                assignedUserId: userId,
             },
             include: {
                 author: true,
                 assignee: true,
-            }
+                comments: true,
+                attachments: true,
+            },
         });
+        if (!tasks.length) {
+            res.status(404).json({ message: "No tasks found for this user" });
+            return;
+        }
         res.json(tasks);
     }
     catch (error) {

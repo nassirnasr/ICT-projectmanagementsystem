@@ -46,13 +46,13 @@ const ModalNewTask = ({ isOpen, onClose ,id = null}: Props) => {
             await createTask({
                 title,
                 description,
-                status: status || undefined, // Convert null to undefined
-                priority: priority || undefined, // Convert null to undefined
+                status: status || undefined,
+                priority: priority || undefined,
                 tags,
                 startDate: formattedStartDate,
                 dueDate: formattedDueDate,
-                authorUserId: parseInt(authorUserId),
-                assignedUserId: parseInt(assignedUserId),
+                authorUserId,
+                assignedUserId,
                 projectId: id !== null ? Number(id) : Number(projectId),
             }).unwrap();
     

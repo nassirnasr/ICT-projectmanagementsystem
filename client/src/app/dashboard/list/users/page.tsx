@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import { DataGrid, GridColDef, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
 import Image from 'next/image';
 import { dataGridClassNames, dataGridSxStyles } from '@/lib/utils';
+import { CircleX, Pen } from 'lucide-react';
 
 type Props = {
   user: User;
@@ -57,7 +58,7 @@ const UserDetailsPopup = ({ user, onClose, onSave }: Props) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white dark:bg-dark-secondary rounded-lg p-6 shadow-lg relative max-w-2xl w-full mx-4">
         <button onClick={onClose} className="absolute top-2 right-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200">
-          &times;
+          <CircleX size={22}/>
         </button>
         
         <div className="flex items-center space-x-4 mb-6">
@@ -119,7 +120,7 @@ const UserDetailsPopup = ({ user, onClose, onSave }: Props) => {
 
         <div className="space-y-4">
           <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-            <h3 className="text-lg font-semibold mb-2">Task Management</h3>
+            <h3 className="text-lg font-semibold mb-2 dark:text-gray-100">Task Management</h3>
             <TaskAssignment onAssignTask={handleTaskAssignment} />
             <AssignedTasksList tasks={selectedTasks} />
           </div>
@@ -145,7 +146,7 @@ const UserDetailsPopup = ({ user, onClose, onSave }: Props) => {
           ) : (
             <button
               onClick={() => setIsEditMode(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex justify-between"
             >
               Edit
             </button>

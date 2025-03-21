@@ -82,7 +82,7 @@ const Sidebar = () => {
     ${isSidebarCollapsed ? 'md:translate-x-0 -translate-x-full' : 'translate-x-0'}
   `;
 
-  // Team Section Component
+  // Personal Info  Section Component
   const TeamSection = () => (
     <div className="mx-3 my-4 rounded-lg bg-gray-50 p-3 dark:bg-dark-secondary">
       <div className="flex items-center gap-3">
@@ -130,7 +130,7 @@ const Sidebar = () => {
       )}
 
       <aside className={SidebarClassName}>
-        <div className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur-sm dark:border-stroke-dark dark:bg-dark-sidebar/80">
+        <div className="sticky top-0 z-50 flex h-20 items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur-sm dark:border-stroke-dark dark:bg-dark-sidebar/80">
           <div className="flex items-center gap-3">
             <Image src="/logo.png" width={35} height={35} alt="Logo" className="rounded-lg" />
             {!isSidebarCollapsed && (
