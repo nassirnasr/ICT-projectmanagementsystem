@@ -6,6 +6,7 @@ export interface Project{
     description?:string;
     startDate?:string;
     endDate? :string;
+    teamId?: number; 
 }
 
 export enum Priority{
@@ -20,16 +21,17 @@ export enum Status {
     ToDo = "To Do",
     WorkInProgress = "Work In Progress",
     UnderReview = "Under Review",
-    Completed = "Completed"
+    Completed = "Complete"
 }
 
 export interface User{
-    userId?: string;
+    userId: string;
     username:string;
     email:string;
     profilePictureUrl?:string;
-    cognitoId?:string;
     teamId?:number;
+    role?: string; 
+    isActive?: boolean; 
 }
 
 export interface Attachment {

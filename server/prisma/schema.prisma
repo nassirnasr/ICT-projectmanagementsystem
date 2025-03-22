@@ -28,6 +28,7 @@ model User {
   teamId            Int?
   role              Role  @default(team_member) 
   sex UserSex?
+  isActive  Boolean @default(true)
 
   authoredTasks   Task[]           @relation("TaskAuthor")
   assignedTasks   Task[]           @relation("TaskAssignee")
@@ -70,7 +71,7 @@ model Task {
   description    String?
   status         String?
   priority       String?
-  tags           String[]  // Fixed: Changed to a required list
+  tags           String[] 
   startDate      DateTime?
   dueDate        DateTime?
   points         Int?

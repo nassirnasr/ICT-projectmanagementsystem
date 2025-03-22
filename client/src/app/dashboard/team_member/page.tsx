@@ -194,23 +194,36 @@ const TeamMemberPage = () => {
         <div className="p-4 bg-white rounded-lg shadow dark:bg-dark-secondary">
           <h3 className="mb-4 text-lg font-semibold dark:text-white">Task Status Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={taskStatusData}
-                dataKey="count"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-              >
-                {taskStatusData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={["#0088FE", "#00C49F", "#FFBB28", "#FF8042"][index]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
+          <PieChart>
+      <Pie
+        data={taskStatusData}
+        dataKey="count"
+        nameKey="name"
+        cx="50%"
+        cy="50%"
+        outerRadius={80}
+        label
+      >
+        {taskStatusData.map((entry) => {
+          // Define colors based on status names
+          const statusColorMap: Record<string, string> = {
+            [Status.Completed]: '#22C55E', 
+            [Status.ToDo]: '#EF4444',      
+            [Status.WorkInProgress]: '#EAB308', 
+            [Status.UnderReview]: '#8B5CF6'    
+          };
+          
+          return (
+            <Cell 
+              key={`cell-${entry.name}`} 
+              fill={statusColorMap[entry.name] || '#6B7280'} 
+            />
+          );
+        })}
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
           </ResponsiveContainer>
         </div>
 
