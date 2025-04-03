@@ -3,28 +3,26 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma =  new PrismaClient();
 // get tasks
-export const getTasks = async (
-    req: Request,
-    res: Response
-): Promise<void> =>{
-    const {projectId} = req.query;
+export const getTasks = async (req: Request, res: Response): Promise<void> => {
+    const { projectId } = req.query;
+    
     try {
-        const tasks = await prisma.task.findMany(
-            {
-                where: {
-                    projectId: Number(projectId),
-                },
-                include: {
-                    author:true,
-                    assignee:true,
-                    comments:true,
-                    attachments:true,
-                }
+        const tasks = await prisma.task.findMany({
+            where: projectId ? { 
+                projectId: Number(projectId) 
+            } : {},
+            include: {
+                author: true,
+                assignee: true,
+                comments: true,
+                attachments: true,
             }
-        );
+        });
         res.json(tasks);
-    } catch (error:any) {
-        res.status(500).json({ message: `Error retrieving tasks ${error.message}`});
+    } catch (error: any) {
+        res.status(500).json({ 
+            message: `Error retrieving tasks: ${error.message}`
+        });
     }
 };
 
@@ -91,5 +89,39 @@ export const updateTaskStatus = async (
         res.json(updatedTask);
     } catch (error:any) {
         res.status(500).json({ message: `Error updating task ${error.message}`});
+    }
+};
+
+
+//Get User Tasks
+export const getUserTasks = async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        res.status(400).json({ message: "User ID is required" });
+        return;
+    }
+
+    try {
+        const tasks = await prisma.task.findMany({
+            where: {
+                assignedUserId: userId,
+            },
+            include: {
+                author: true,
+                assignee: true,
+                comments: true,
+                attachments: true,
+            },
+        });
+
+        if (!tasks.length) {
+            res.status(404).json({ message: "No tasks found for this user" });
+            return;
+        }
+
+        res.json(tasks);
+    } catch (error: any) {
+        res.status(500).json({ message: `Error retrieving user's tasks: ${error.message}` });
     }
 };

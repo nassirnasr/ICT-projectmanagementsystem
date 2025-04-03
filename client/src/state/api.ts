@@ -6,6 +6,7 @@ export interface Project{
     description?:string;
     startDate?:string;
     endDate? :string;
+    teamId?: number; 
 }
 
 export enum Priority{
@@ -20,16 +21,17 @@ export enum Status {
     ToDo = "To Do",
     WorkInProgress = "Work In Progress",
     UnderReview = "Under Review",
-    Completed = "Completed"
+    Completed = "Complete"
 }
 
 export interface User{
-    userId?: number;
+    userId: string;
     username:string;
     email:string;
     profilePictureUrl?:string;
-    cognitoId?:string;
     teamId?:number;
+    role?: string; 
+    isActive?: boolean; 
 }
 
 export interface Attachment {
@@ -50,18 +52,33 @@ export interface Task {
         dueDate? :string;
         points?:number;
         projectId:number;
-        authorUserId?:number;
-        assignedUserId?:number;
+        authorUserId?:string;
+        assignedUserId?:string;
 
         author?:User;
         assignee?:User;
         comments?:Comment[];
         attachments?:Attachment[];
 }
+        //interface for search
+export interface SearchResults {
+    tasks? : Task[];
+    projects? : Project[];
+    users? : User[];
+}
+     //interface for team
+export interface Team{
+    teamId: number;
+    teamName: string;
+    productOwnerUserId?: string;
+    projectManagerUserId?: string;
+}
+
+
 export const api = createApi({
     baseQuery: fetchBaseQuery({baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL}),
     reducerPath: "api",
-    tagTypes: ["Projects", "Tasks"],
+    tagTypes: ["Projects", "Tasks", "Users", "Teams"],
     endpoints: (build) => ({
         //get project
         getProjects: build.query<Project[], void>({
@@ -79,13 +96,27 @@ export const api = createApi({
         }),
 
 
-        //get task
-        getTasks: build.query<Task[], { projectId:number}>({
-            query: ({projectId}) => `tasks?projectId=${projectId}`,
+        //get tasks
+        getTasks: build.query<Task[], { projectId?: number }>({  // Make projectId optional
+            query: (params) => {
+              const queryParams = params?.projectId 
+                ? `?projectId=${params.projectId}`
+                : '';
+              return `tasks${queryParams}`;
+            },
             providesTags: (result) => 
-                result 
-                    ? result.map(({id}) => ({type: "Tasks" as const , id})) 
-                    : [{type: "Tasks" as const}],
+              result 
+                ? result.map(({id}) => ({type: "Tasks" as const , id})) 
+                : [{type: "Tasks" as const}],
+          }),
+
+        //get user tasks
+        getTaskByUser: build.query<Task[], string>({
+            query: (userId) => `tasks/user/${userId}`,
+            providesTags: (result, error, userId) =>
+                result
+                    ? result.map(({ id }) => ({ type: "Tasks", id }))
+                    : [{ type: "Tasks", id: userId }],
         }),
 
          //create task
@@ -109,6 +140,23 @@ export const api = createApi({
                 {type:"Tasks", id:taskId},
             ],
         }),
+
+        //users
+        getUsers:build.query<User[], void>({
+            query: () => "users",
+            providesTags: ["Users"]
+        }),
+
+        //search
+        search: build.query<SearchResults, string>({
+            query: (query) => `search?query=${query}`,
+        }),
+
+        //team
+        getTeams: build.query<Team[], void>({
+            query: () => "teams",
+            providesTags: ["Teams"]
+        }),
     }),
     
     
@@ -120,4 +168,8 @@ export const {
     useGetTasksQuery,
     useCreateTaskMutation,
     useUpdateTaskStatusMutation,
+    useSearchQuery,
+    useGetUsersQuery,
+    useGetTeamsQuery,
+    useGetTaskByUserQuery,
 } = api;
